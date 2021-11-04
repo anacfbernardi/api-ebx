@@ -1,31 +1,34 @@
 <?php
 
-namespace App\Http\Controllers\Health;
+namespace App\Http\Controllers\Balance;
 
 use Symfony\Component\HttpFoundation\Response;
-// use App\Http\Controllers\Controller;
 use App\Http\Controllers\ApiController;
+use Illuminate\Http\Request;
 
 /**
- * Controller responsavel por checar se a aplicação está rodando.
+ * Balance Controller
  */
-class HealthController extends ApiController
+class BalanceController extends ApiController
 {
     /**
-     * Construtor padrão.
+     * Default constructor
      */
     public function __construct()
     {
-        
     }
 
     /**
-     * Recuperar todas as empresas.
+     * Get account balance.
      *
      * @return Response
      */
-    public function mostrar()
+    public function show(Request $request)
     {
+        $this->validate($request, [
+            'account_id' => 'required|numeric'
+        ]);
+
         try {
             return $this->criarResposta(Response::HTTP_OK, null, null);
         } catch (\Exception $ex) {
