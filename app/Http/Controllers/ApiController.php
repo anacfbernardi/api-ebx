@@ -10,52 +10,33 @@ use Illuminate\Http\JsonResponse;
 class ApiController extends Controller
 {
     /**
-     * Criar resposta http com erros.
-     *
-     * @param $httpStatusCode
-     * @param $erros
-     * @return JsonResponse
-     */
-    protected function criarRespostaComErros($httpStatusCode, $erros)
-    {
-        $response['status'] = $httpStatusCode;
-        $response['erros'] = $erros;
-
-        return response()->json($response, $httpStatusCode);
-    }
-
-    /**
-     * Criar resposta http.
+     * Create http response.
      *
      * @param int $httpStatusCode
-     * @param array $dados
-     * @param string $mensagemErro
-     * @param string $excecao
+     * @param array $data
+     * @param string $errorMessage
      * @return JsonResponse
      */
-    protected function criarResposta($httpStatusCode, $dados = [], $mensagemErro = null, $excecao = null)
+    protected function createResponse($httpStatusCode, $data = [], $errorMessage = null)
     {
         $response['status'] = $httpStatusCode;
-        if ($dados) {
-            foreach ($dados as $key => $value) {
-                if (isset($value['paginacao'])) {
-                    $response['paginacao'] = $value['paginacao'];
-                    $response['dados'][$key] = $value['dados'];
-                }
+        if ($data) {
+            foreach ($data as $key => $value) {
+                $response['data'][$key] = $value['data'];
             }
-            if (!isset($response['dados'])) {
-                $response['dados'] = $dados;
+
+            if (!isset($response['data'])) {
+                $response['data'] = $data;
             }
         }
 
-        if ($mensagemErro) {
-            $erro['mensagem'] = $mensagemErro;
+        if ($errorMessage) {
+            $erro['message'] = $errorMessage;
             $response['erros'] = [
                 $erro
             ];
         }
 
-        return response()->json($response, $httpStatusCode,[], JSON_UNESCAPED_UNICODE);
+        return response()->json($response, $httpStatusCode, [], JSON_UNESCAPED_UNICODE);
     }
-
 }

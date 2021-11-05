@@ -4,17 +4,22 @@ namespace App\Http\Controllers\Reset;
 
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\ApiController;
+use App\Business\Reset\ResetBiz;
 
 /**
  * Reset Controller
  */
 class ResetController extends ApiController
 {
+
+    private $resetBiz;
+
     /**
      * Default constructor
      */
     public function __construct()
     {
+        $this->resetBiz = new ResetBiz();
     }
 
     /**
@@ -25,9 +30,10 @@ class ResetController extends ApiController
     public function reset()
     {
         try {
-            return $this->criarResposta(Response::HTTP_OK, null, null);
+            $this->resetBiz->reset();
+            return $this->createResponse(Response::HTTP_OK, 0, null);
         } catch (\Exception $ex) {
-            return $this->criarResposta(Response::HTTP_INTERNAL_SERVER_ERROR, null, null);
+            return $this->createResponse(Response::HTTP_INTERNAL_SERVER_ERROR, null, null);
         }
     }
 }

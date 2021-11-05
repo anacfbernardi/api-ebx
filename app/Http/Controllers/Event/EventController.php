@@ -5,17 +5,21 @@ namespace App\Http\Controllers\Event;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
+use App\Business\Event\EventBiz;
 
 /**
  * Event Controller
  */
 class EventController extends ApiController
 {
+    private $eventBiz;
+
     /**
      * Default constructor
      */
     public function __construct()
     {
+        $this->eventBiz = new EventBiz();
     }
 
     /**
@@ -33,9 +37,15 @@ class EventController extends ApiController
         ]);
 
         try {
-            return $this->criarResposta(Response::HTTP_CREATED, null, null);
+            $event = $this->eventBiz->create($request->all());
+
+            if (empty($event)) {
+                return $this->createResponse(Response::HTTP_INTERNAL_SERVER_ERROR, null, 'Error');
+            }
+
+            return $this->createResponse(Response::HTTP_CREATED, $event, null);
         } catch (\Exception $ex) {
-            return $this->criarResposta(Response::HTTP_INTERNAL_SERVER_ERROR, null, null);
+            return $this->createResponse(Response::HTTP_INTERNAL_SERVER_ERROR, null, null);
         }
     }
 }
