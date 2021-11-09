@@ -17,25 +17,9 @@ class ApiController extends Controller
      * @param string $errorMessage
      * @return JsonResponse
      */
-    protected function createResponse($httpStatusCode, $data = [], $errorMessage = null)
+    protected function createResponse($httpStatusCode, $data = '')
     {
-        $response['status'] = $httpStatusCode;
-        if ($data) {
-            foreach ($data as $key => $value) {
-                $response['data'][$key] = $value['data'];
-            }
-
-            if (!isset($response['data'])) {
-                $response['data'] = $data;
-            }
-        }
-
-        if ($errorMessage) {
-            $erro['message'] = $errorMessage;
-            $response['erros'] = [
-                $erro
-            ];
-        }
+        $response = $data;
 
         return response()->json($response, $httpStatusCode, [], JSON_UNESCAPED_UNICODE);
     }

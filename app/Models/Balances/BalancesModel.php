@@ -26,6 +26,18 @@ class BalancesModel extends BaseModel
      * @var array
      */
     protected $fillable = [
-        "account_id"
+        "account_id",
+        "balance"
     ];
+
+    /**
+     * Format balance value
+     *
+     * @param  string  $value
+     * @return float
+     */
+    public function getBalanceAttribute($value)
+    {
+        return $this->strToFloat($value);
+    }
 }

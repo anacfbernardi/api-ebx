@@ -21,22 +21,13 @@ class BalanceBiz
     }
 
     /**
-     * Insert new balance
-     *
-     * @return \App\Model\Balance\BalancesModel
-     */
-    public function create(array $data)
-    {
-        return $this->balancesRepository->create($data);
-    }
-
-    /**
      * Get last account balance
      *
-     * @return \App\Model\Balance\BalancesModel
+     * @return float
      */
     public function getBalance(int $accountId)
     {
-        return $this->balancesRepository->getLastBalance($accountId);
+        $balance = $this->balancesRepository->getLastBalance($accountId);
+        return !($balance) ? null : $balance['balance'];
     }
 }

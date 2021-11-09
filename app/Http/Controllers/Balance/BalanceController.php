@@ -37,12 +37,13 @@ class BalanceController extends ApiController
         try {
             $balance = $this->balanceBiz->getBalance($request['account_id']);
 
-            if (empty($balance)) {
-                return $this->createResponse(Response::HTTP_NOT_FOUND, null, 'Not found');
+            if ($balance) {
+                return $this->createResponse(Response::HTTP_OK, $balance);
             }
-            return $this->createResponse(Response::HTTP_OK, $balance['balance'], null);
+
+            return $this->createResponse(Response::HTTP_NOT_FOUND, 0);
         } catch (\Exception $ex) {
-            return $this->createResponse(Response::HTTP_INTERNAL_SERVER_ERROR, null, null);
+            return $this->createResponse(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

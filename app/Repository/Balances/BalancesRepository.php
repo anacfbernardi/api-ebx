@@ -32,8 +32,7 @@ class BalancesRepository extends BaseRepository
                 ->select()
                 ->where('account_id', $accountId)
                 ->orderByDesc('created_at')
-                ->limit(1)
-                ->get();
+                ->first();
         } catch (\Exception $e) {
             throw $e;
         }

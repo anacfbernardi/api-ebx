@@ -34,7 +34,7 @@ abstract class BaseRepository
     public function delete_all()
     {
         try {
-            return $this->model->delete();
+            return $this->model->truncate();
         } catch (\Exception $e) {
             throw $e;
         }

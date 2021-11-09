@@ -16,6 +16,7 @@ class Balances extends Migration
         Schema::create('balances', function (Blueprint $table) {
             $table->id('balance_id');
             $table->integer('account_id');
+            $table->decimal('balance', 10, 2);
             $table->timestamps();
         });
     }

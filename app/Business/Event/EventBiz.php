@@ -5,6 +5,8 @@ namespace App\Business\Event;
 use App\Repository\Accounts\AccountsRepository;
 use App\Repository\Balances\BalancesRepository;
 use Exception;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class EventBiz
@@ -32,32 +34,52 @@ class EventBiz
      */
     public function create(array $data)
     {
-        switch ($data['type']) {
-            case 'deposit':
-                return $this->deposit($data);
-                break;
-            case 'withdraw':
-                return $this->withdraw($data);
-                break;
-            case 'transfer':
-                return $this->transfer($data);
-                break;
+        try {
+            switch ($data['type']) {
+                case 'deposit':
+                    return $this->deposit($data);
+                    break;
+                case 'withdraw':
+                    return $this->withdraw($data);
+                    break;
+                case 'transfer':
+                    return $this->transfer($data);
+                    break;
+            }
+        } catch (NotFoundHttpException $e) {
+            return [];
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 
+    private function formatResponse($data, $account_type)
+    {
+        return !empty($data) ? [
+            $account_type => [
+                'id' => strval($data['account_id']),
+                'balance' => $data['balance']
+            ]
+        ] : [];
+    }
 
     private function deposit($data)
     {
         $accountId = $data['destination'];
 
         if ($this->accountExists($accountId)) {
-            $lastBalance = $this->getLastAccountBalance($accountId);
-            return $this->updateBalance($lastBalance['balance'] + $data['amount'], $accountId);
+            return  $this->formatResponse(
+                $this->updateAccountBalance($accountId, $data['amount']),
+                'destination'
+            );
         }
 
-        return $this->createNewAccountWithInitialBalance(
-            $accountId,
-            $data['amount']
+        return $this->formatResponse(
+            $this->createNewAccountWithInitialBalance(
+                $accountId,
+                $data['amount']
+            ),
+            'destination'
         );
     }
 
@@ -66,35 +88,19 @@ class EventBiz
         $accountId = $data['origin'];
 
         if (!$this->accountExists($accountId)) {
-            throw new Exception();
+            throw new NotFoundHttpException();
         }
 
-        $lastBalance = $this->getLastAccountBalance($accountId);
-        return $this->updateBalance($lastBalance['balance'] - $data['amount'], $accountId);
+        return $this->formatResponse(
+            $this->updateAccountBalance($accountId, $data['amount'] * -1),
+            'origin'
+        );
     }
 
     private function transfer($data)
     {
-        $originAccountId = $data['origin'];
-
-        if (!$this->accountExists($originAccountId)) {
-            throw new Exception();
-        }
-
-        $lastBalance = $this->getLastAccountBalance($originAccountId);
-        $origin = $this->updateBalance($lastBalance['balance'] - $data['amount'], $originAccountId);
-
-        $destinationAccountId = $data['destination'];
-
-        if ($this->accountExists($destinationAccountId)) {
-            $lastBalance = $this->getLastAccountBalance($destinationAccountId);
-            return $this->updateBalance($lastBalance['balance'] + $data['amount'], $destinationAccountId);
-        }
-
-        $destination = $this->createNewAccountWithInitialBalance(
-            $destinationAccountId,
-            $data['amount']
-        );
+        $origin = $this->withdraw($data);
+        $destination = $this->deposit($data);
 
         return [
             'origin' => $origin,
@@ -110,7 +116,7 @@ class EventBiz
      */
     private function accountExists(int $accountId)
     {
-        return !empty($this->accountsRepository->getById($accountId));
+        return ($this->accountsRepository->getById($accountId)->count() > 0);
     }
 
     /**
@@ -137,17 +143,34 @@ class EventBiz
         $this->accountsRepository->create([
             'account_id' => $accountId
         ]);
-        return $this->updateBalance($accountId, $initialBalance);
+        return $this->insertBalance($accountId, $initialBalance);
     }
 
+
     /**
-     * Update the account balance
+     * Calculates and insert the new account balance
+     *
+     * @param int $accountId
+     * @param float $value
+     * @return mixed
+     */
+    function updateAccountBalance($accountId, $value)
+    {
+        $lastBalance = $this->getLastAccountBalance($accountId);
+        $newBalance = $lastBalance + $value;
+
+        return $this->insertBalance($accountId, $newBalance);
+    }
+
+
+    /**
+     * Insert the account balance
      *
      * @param int $accountId
      * @param float $value
      * @return float
      */
-    private function updateBalance($accountId, $value)
+    private function insertBalance($accountId, $value)
     {
         return $this->balanceRepository->create([
             'account_id' => $accountId,

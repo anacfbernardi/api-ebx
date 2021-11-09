@@ -40,12 +40,12 @@ class EventController extends ApiController
             $event = $this->eventBiz->create($request->all());
 
             if (empty($event)) {
-                return $this->createResponse(Response::HTTP_INTERNAL_SERVER_ERROR, null, 'Error');
+                return $this->createResponse(Response::HTTP_NOT_FOUND, 0);
             }
 
-            return $this->createResponse(Response::HTTP_CREATED, $event, null);
+            return $this->createResponse(Response::HTTP_CREATED, $event);
         } catch (\Exception $ex) {
-            return $this->createResponse(Response::HTTP_INTERNAL_SERVER_ERROR, null, null);
+            return $this->createResponse(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

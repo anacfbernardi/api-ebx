@@ -15,15 +15,12 @@ class BaseTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        AccountsModel::factory()->state([
-            'account_id' => '100',
-            'account_name' => 'teste'
-        ])->make();
+        $this->get('/reset');
     }
 
     protected function tearDown(): void
     {
-        // $this->model->where('id_empresa', '=', 997)->delete();
+        $this->get('/reset');
         parent::tearDown();
     }
 }

@@ -9,4 +9,12 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseModel extends Model
 {
+
+    protected function strToFloat(string $value = null)
+    {
+        if ($value)
+            return floatval($value);
+
+        return 0;
+    }
 }

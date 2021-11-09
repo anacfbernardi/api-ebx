@@ -3,7 +3,6 @@
 namespace App\Models\Accounts;
 
 use App\Models\BaseModel;
-use Database\Factories\Accounts\AccountsFactory;
 
 class AccountsModel extends BaseModel
 {
@@ -27,6 +26,6 @@ class AccountsModel extends BaseModel
      * @var array
      */
     protected $fillable = [
-        "account_name"
+        'account_id',
     ];
 }

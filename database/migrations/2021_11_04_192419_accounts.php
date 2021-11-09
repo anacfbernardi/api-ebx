@@ -15,7 +15,7 @@ class Accounts extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id('account_id');
-            $table->string('account_name');
+            $table->timestamps();
         });
     }
 
