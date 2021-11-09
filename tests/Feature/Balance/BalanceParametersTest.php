@@ -2,12 +2,12 @@
 
 namespace Tests\Feature\Balance;
 
-use Tests\TestCase;
+use Tests\BaseTest;
 
 /**
  * Balance endpoints tests
  */
-class BalanceParametersTest extends TestCase
+class BalanceParametersTest extends BaseTest
 {
     public function test_1_balance_invalid_method()
     {
@@ -39,7 +39,9 @@ class BalanceParametersTest extends TestCase
 
     public function test_4_balance_success()
     {
-        $response = $this->get('/balance?account_id=1');
+        $this->createAccount(100, 10);
+
+        $response = $this->get('/balance?account_id=100');
 
         $response->seeStatusCode(200);
     }

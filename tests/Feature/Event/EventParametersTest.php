@@ -2,12 +2,12 @@
 
 namespace Tests\Feature\Event;
 
-use Tests\TestCase;
+use Tests\BaseTest;
 
 /**
  * Event endpoints tests
  */
-class EventParametersTest extends TestCase
+class EventParametersTest extends BaseTest
 {
     public function test_1_event_invalid_method()
     {
@@ -230,6 +230,8 @@ class EventParametersTest extends TestCase
      */
     public function test_15_event_deposit_success()
     {
+        $this->createAccount(1, 10);
+
         $response = $this->post('/event', [
             'type' => 'deposit',
             'destination' => 1,
@@ -240,21 +242,25 @@ class EventParametersTest extends TestCase
 
     public function test_16_event_withdraw_success()
     {
+        $this->createAccount(100, 10);
+
         $response = $this->post('/event', [
             'type' => 'withdraw',
-            'origin' => 666,
-            'amount' => 500
+            'origin' => 100,
+            'amount' => 10
         ]);
         $response->seeStatusCode(201);
     }
 
     public function test_17_event_transfer_success()
     {
+        $this->createAccount(1, 10);
+
         $response = $this->post('/event', [
             'type' => 'transfer',
-            'destination' => 1,
-            'origin' => 2,
-            'amount' => 500
+            'destination' => 2,
+            'origin' => 1,
+            'amount' => 10
         ]);
         $response->seeStatusCode(201);
     }

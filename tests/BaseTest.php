@@ -3,24 +3,46 @@
 namespace Tests;
 
 use Tests\TestCase;
-use App\Models\Accounts\AccountsModel;
-use App\Models\Accounts\BalanceModel;
+use App\Repository\Accounts\AccountsRepository;
+use App\Repository\Balances\BalancesRepository;
 
 /**
  * Base tests class
  */
 class BaseTest extends TestCase
 {
+    private $accountsRepo;
+    private $balanceRepo;
+
+    protected function resetDatabase()
+    {
+        $this->accountsRepo->delete_all();
+        $this->balanceRepo->delete_all();
+    }
+
+    protected function createAccount(int $accountId, float $balance)
+    {
+        $this->accountsRepo->create([
+            'account_id' => $accountId
+        ]);
+        $this->balanceRepo->create([
+            'account_id' => $accountId,
+            'balance' => $balance
+        ]);
+    }
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->get('/reset');
+        $this->accountsRepo = new AccountsRepository();
+        $this->balanceRepo = new BalancesRepository();
+
+        $this->resetDatabase();
     }
 
     protected function tearDown(): void
     {
-        $this->get('/reset');
+        $this->resetDatabase();
         parent::tearDown();
     }
 }
