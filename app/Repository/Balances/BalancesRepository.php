@@ -31,7 +31,7 @@ class BalancesRepository extends BaseRepository
             return $this->model
                 ->select()
                 ->where('account_id', $accountId)
-                ->orderByDesc('created_at')
+                ->orderByDesc('balance_id')
                 ->first();
         } catch (\Exception $e) {
             throw $e;

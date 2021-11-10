@@ -102,10 +102,10 @@ class EventBiz
         $origin = $this->withdraw($data);
         $destination = $this->deposit($data);
 
-        return [
+        return array_merge(
             $origin,
             $destination
-        ];
+        );
     }
 
     /**
