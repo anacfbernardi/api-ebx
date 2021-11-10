@@ -31,7 +31,7 @@ class ResetController extends ApiController
     {
         try {
             $this->resetBiz->reset();
-            return $this->createResponse(Response::HTTP_OK, 0);
+            return $this->createResponse(Response::HTTP_OK, 'OK');
         } catch (\Exception $ex) {
             return $this->createResponse(Response::HTTP_INTERNAL_SERVER_ERROR);
         }

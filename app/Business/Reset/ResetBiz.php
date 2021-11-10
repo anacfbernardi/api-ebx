@@ -33,6 +33,6 @@ class ResetBiz
     {
         $this->accountsRepository->delete_all();
         $this->balancesRepository->delete_all();
-        return 0;
+        return true;
     }
 }
