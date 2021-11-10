@@ -103,8 +103,8 @@ class EventBiz
         $destination = $this->deposit($data);
 
         return [
-            'origin' => $origin,
-            'destination' => $destination
+            $origin,
+            $destination
         ];
     }
 
